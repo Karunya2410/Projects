@@ -4,14 +4,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 
-# Function to establish a database connection
 def get_connection():
     if "conn" not in st.session_state or not st.session_state.conn.is_connected():
         st.session_state.conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="Retail_orders"
+            host=st.secrets["gateway01.ap-southeast-1.prod.aws.tidbcloud.com"],
+            user=st.secrets["3QUsgxAxK8dDXTK.root"],
+            password=st.secrets["wdQNGsQeVe8OQUkE"],
+            database=st.secrets["Retail_orders"]
         )
     return st.session_state.conn
 
