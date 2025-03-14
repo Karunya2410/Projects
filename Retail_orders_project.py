@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 
+db_config = st.secrets["database"]
+
 def get_connection():
     if "conn" not in st.session_state or not st.session_state.conn.is_connected():
         st.session_state.conn = mysql.connector.connect(
