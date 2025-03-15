@@ -16,20 +16,20 @@ def get_connection():
         )
     return st.session_state.conn
 
-# Function to execute queries
+
 def run_query(query):
     try:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(query)
         
-        # Fetch column names
+        
         column_names = [i[0] for i in cursor.description]
         
-        # Fetch data
+        
         data = cursor.fetchall()
         
-        # Convert to Pandas DataFrame
+       
         df = pd.DataFrame(data, columns=column_names)
         
         cursor.close()  # Close the cursor
@@ -38,13 +38,13 @@ def run_query(query):
         st.error(f"Query execution failed: {e}")
         return pd.DataFrame()
 
-# Streamlit UI
+
 st.title("📊 Data Analysis with SQL")
 
-# Sidebar Selection
+
 category = st.sidebar.radio("Choose a Category:", ["Business Insights", "SQL Queries"])
 
-# Business Insights Queries
+
 business_queries = {
     "Top-Selling Products": "SELECT product_id, sub_category, SUM(quantity * sale_price) AS total_revenue FROM orders_part2 GROUP BY product_id ORDER BY total_revenue DESC LIMIT 10;",
     "Monthly Sales Analysis": """SELECT YEAR(STR_TO_DATE(o.order_date, '%d-%m-%Y')) AS year, 
@@ -89,7 +89,7 @@ business_queries = {
                  GROUP BY product_id, sub_category
                  ORDER BY discount_percentage DESC;"""
 }
-# SQL Queries
+
 sql_queries = {
     "Top 10 Highest Revenue Generating Products":"""SELECT 
     product_id, sub_category,
@@ -182,15 +182,15 @@ ORDER BY year;""",
     "Top 3 Most Popular Product Categories by Total Quantity Sold": "SELECT o.category, SUM(p.quantity) AS total_quantity_sold FROM orders_part1 o JOIN orders_part2 p ON o.product_id = p.product_id GROUP BY o.category ORDER BY total_quantity_sold DESC LIMIT 3;"
 }
 
-# Select Query Based on Category
+
 if category == "Business Insights":
     selected_query = st.selectbox("Select an Insight:", list(business_queries.keys()))
     if st.button("Run Query"):
         data = run_query(business_queries[selected_query])
         st.write("### Query Results")
-        st.dataframe(data)  # Display Table
+        st.dataframe(data)  
         
-        # Generate Charts
+       
         if not data.empty:
             if "product_id" in data.columns:
                 fig = px.bar(data, x="product_id" or "city", y="total_revenue", title="Top-Selling Products")
@@ -210,9 +210,9 @@ elif category == "SQL Queries":
     if st.button("Run Query"):
         data = run_query(sql_queries[selected_query])
         st.write("### Query Results")
-        st.dataframe(data)  # Display Table
+        st.dataframe(data)  
         
-        # Generate Charts
+       
         if not data.empty:
             if "product_id" in data.columns:
                 fig = px.bar(data, x="product_id", y="total_revenue", title="Revenue by Product")
